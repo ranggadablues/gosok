@@ -4,21 +4,42 @@ import (
 	"os"
 
 	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/go-kit/log/term"
 	"github.com/ranggadablues/gosok/common"
 )
 
 type ILogLevel interface {
-	LogLevel(keyvals ...interface{})
+	LogInfoLevel(keyvals ...interface{})
+	LogWarnLevel(keyvals ...interface{})
+	LogErrorLevel(keyvals ...interface{})
+	LogDebugLevel(keyvals ...interface{})
 }
 
 type LogLevel struct {
+	logger log.Logger
 }
 
-func NewLogger() log.Logger {
+func NewLogger() ILogLevel {
 	logger := term.NewLogger(os.Stdout, log.NewLogfmtLogger, ColorInit)
-	logger = log.With(logger, "ts", log.DefaultTimestamp, "caller", log.DefaultCaller)
-	return logger
+	logger = log.With(logger, "ts", log.DefaultTimestamp, "caller", log.Caller(4))
+	return &LogLevel{logger: logger}
+}
+
+func (l *LogLevel) LogInfoLevel(keyvals ...interface{}) {
+	level.Info(l.logger).Log(keyvals...)
+}
+
+func (l *LogLevel) LogWarnLevel(keyvals ...interface{}) {
+	level.Warn(l.logger).Log(keyvals...)
+}
+
+func (l *LogLevel) LogErrorLevel(keyvals ...interface{}) {
+	level.Error(l.logger).Log(keyvals...)
+}
+
+func (l *LogLevel) LogDebugLevel(keyvals ...interface{}) {
+	level.Debug(l.logger).Log(keyvals...)
 }
 
 func ColorInit(keyvals ...interface{}) term.FgBgColor {
@@ -26,7 +47,7 @@ func ColorInit(keyvals ...interface{}) term.FgBgColor {
 		if keyvals[i] != "level" {
 			continue
 		}
-		level := common.ToString(keyvals[i+1])
+		level := common.ParseString(keyvals[i+1])
 		switch level {
 		case "debug":
 			return term.FgBgColor{Fg: term.White, Bg: term.DarkGray}
