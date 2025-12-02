@@ -11,7 +11,7 @@ func IsLocalDev() bool {
 }
 
 func Error(msg string, err error) error {
-	if err == nil {
+	if err == nil && msg == "" {
 		return nil
 	}
 
@@ -27,4 +27,20 @@ func Error(msg string, err error) error {
 
 	// production: hide internals
 	return err
+}
+
+func ErrorInsert(err error) error {
+	return Error("failed to insert", err)
+}
+
+func ErrorFind(err error) error {
+	return Error("failed to find", err)
+}
+
+func ErrorUpdate(err error) error {
+	return Error("failed to update", err)
+}
+
+func ErrorDelete(err error) error {
+	return Error("failed to delete", err)
 }

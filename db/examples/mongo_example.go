@@ -18,6 +18,8 @@ const (
 func Example() {
 	basicExample()
 	advancedExample()
+	UpdateExamples()
+	CleanupExample()
 }
 
 // basicExample shows basic MongoDB operations
@@ -49,11 +51,11 @@ func advancedExample() {
 		"created": time.Now(),
 	}
 
-	result, err := mongoManager.InsertOne("users", user)
+	insertedID, err := mongoManager.InsertOne("users", user)
 	if err != nil {
 		log.Printf("Failed to insert user: %v", err)
 	} else {
-		fmt.Printf("Inserted user with ID: %v\n", result.InsertedID)
+		fmt.Printf("Inserted user with ID: %v\n", insertedID)
 	}
 
 	// Example 4: Insert multiple documents
@@ -63,11 +65,11 @@ func advancedExample() {
 		bson.M{"name": "Charlie", "email": "charlie@example.com", "age": 35},
 	}
 
-	manyResult, err := mongoManager.InsertMany("users", users)
+	insertedIDs, err := mongoManager.InsertMany("users", users)
 	if err != nil {
 		log.Printf("Failed to insert users: %v", err)
 	} else {
-		fmt.Printf("Inserted %d users\n", len(manyResult.InsertedIDs))
+		fmt.Printf("Inserted %d users\n", len(insertedIDs))
 	}
 
 	// Example 5: Find one document
@@ -107,11 +109,9 @@ func advancedExample() {
 	}
 
 	// Example 8: Delete operations
-	deleteResult, err := mongoManager.DeleteOne("users", bson.M{"email": testUserEmail})
+	err = mongoManager.DeleteOne("users", bson.M{"email": testUserEmail})
 	if err != nil {
 		log.Printf("Failed to delete user: %v", err)
-	} else {
-		fmt.Printf("Deleted %d user\n", deleteResult.DeletedCount)
 	}
 
 	// Example 9: Advanced Find examples
@@ -191,10 +191,8 @@ func showAdvancedFindExamples(mongoManager db.IMongoLib) {
 	}
 
 	// Example 6: Delete many documents
-	deleteResult, err := mongoManager.DeleteMany("users", bson.M{"age": bson.M{"$lt": 18}})
+	err = mongoManager.DeleteMany("users", bson.M{"age": bson.M{"$lt": 18}})
 	if err != nil {
 		log.Printf("Failed to delete users: %v", err)
-	} else {
-		fmt.Printf("Deleted %d users\n", deleteResult.DeletedCount)
 	}
 }

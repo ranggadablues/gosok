@@ -124,11 +124,11 @@ func ConnectionHealthExample() {
 	fmt.Println("Performing operations with automatic connection health checks...")
 
 	// Operation 1: Insert (will check connection health first)
-	result, err := mongo.InsertOne("test", bson.M{"name": "test", "timestamp": "now"})
+	insertedID, err := mongo.InsertOne("test", bson.M{"name": "test", "timestamp": "now"})
 	if err != nil {
 		log.Printf("Insert error: %v", err)
 	} else {
-		fmt.Printf("Inserted document with ID: %v\n", result.InsertedID)
+		fmt.Printf("Inserted document with ID: %v\n", insertedID)
 	}
 
 	// Operation 2: Find (will check connection health first)

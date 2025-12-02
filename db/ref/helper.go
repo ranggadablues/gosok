@@ -61,3 +61,17 @@ func WithProjection(projection any) FindOption {
 		opts.Projection = projection
 	}
 }
+
+// UpdateOption allows customizing update operations
+type UpdateOption func(*UpdateOptions)
+
+type UpdateOptions struct {
+	Upsert *bool
+}
+
+// WithUpsert sets the upsert option for update operations
+func WithUpsert(upsert bool) UpdateOption {
+	return func(opts *UpdateOptions) {
+		opts.Upsert = &upsert
+	}
+}
